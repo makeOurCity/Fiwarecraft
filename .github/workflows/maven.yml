@@ -37,9 +37,3 @@ jobs:
 
       - name: Build with Maven
         run: mvn -B clean package install --file pom.xml
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: BlankPlugin
-          path: target/BlankPlugin-1.0-SNAPSHOT.jar

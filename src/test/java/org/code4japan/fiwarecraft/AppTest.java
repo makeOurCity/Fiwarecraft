@@ -1,4 +1,4 @@
-package me.ushio;
+package org.code4japan.fiwarecraft;
 
 import static org.junit.Assert.assertTrue;
 

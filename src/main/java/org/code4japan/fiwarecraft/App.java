@@ -1,4 +1,4 @@
-package me.ushio;
+package org.code4japan.fiwarecraft;
 
 /**
  * Hello world!

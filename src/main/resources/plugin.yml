@@ -1,5 +1,6 @@
 main: org.code4japan.fiwarecraft.App
-name: BlankPlugin
+name: Fiwarecraft
 version: '1.0-SNAPSHOT'
-api-version: '1.17'
+api-version: '1.13'
 description: 'A Fiwarecraft plugin for Spigot'
+author: Code4Japan

@@ -1,3 +1,6 @@
-main: dev.cibmc.spigot.blankplugin.App
-name: BlankPlugin
-version: 0.1
+main: org.code4japan.fiwarecraft.App
+name: Fiwarecraft
+version: '1.0-SNAPSHOT'
+api-version: '1.13'
+description: 'A Fiwarecraft plugin for Spigot'
+author: Code4Japan

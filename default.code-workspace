@@ -7,7 +7,7 @@
   "settings": {
     "files.autoGuessEncoding": true,
     "files.encoding": "utf8",
-    "java.home": "/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home",
+    "java.jdt.ls.java.home": "/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home",
     "java.jdt.ls.vmargs": "-Dfile.encoding=UTF-8",
     "javac-linter.javac": "javac -Dfile.encoding=UTF-8"
   }

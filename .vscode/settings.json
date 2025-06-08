@@ -1,3 +1,14 @@
 {
-  "cSpell.words": ["Dfile", "fiwarecraft", "javac", "vmargs"]
+  "editor.formatOnSave": true,
+  "files.encoding": "utf8",
+  "java.jdt.ls.vmargs": "-Dfile.encoding=UTF-8",
+  "java.compile.nullAnalysis.mode": "automatic",
+  "cSpell.words": [
+    "Dfile",
+    "fiwarecraft",
+    "javac",
+    "makeour",
+    "spigotmc",
+    "vmargs"
+  ],
 }

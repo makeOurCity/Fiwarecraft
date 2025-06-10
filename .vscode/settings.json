@@ -7,6 +7,7 @@
     "bukkit",
     "Dfile",
     "fiwarecraft",
+    "gson",
     "javac",
     "jitpack",
     "makeour",

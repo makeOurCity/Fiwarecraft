@@ -1,4 +1,4 @@
-package city.makeour.fiwarecraft.models;
+package city.makeour.fiwarecraft.model;
 
 public class Ping {
 

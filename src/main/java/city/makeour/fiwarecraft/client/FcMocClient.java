@@ -28,6 +28,8 @@ public class FcMocClient {
         String username = System.getenv("TEST_COGNITO_USERNAME");
         String password = System.getenv("TEST_COGNITO_PASSWORD");
 
+        System.out.println("Cognito User Pool ID: " + cognitoUserPoolId);
+
         if (cognitoUserPoolId == null || cognitoClientId == null || username == null || password == null) {
             return false;
         }
@@ -39,6 +41,8 @@ public class FcMocClient {
             e.printStackTrace();
             return false;
         }
+
+        System.out.println("Authentication successful for user: " + username);
 
         return true;
     }

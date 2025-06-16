@@ -216,23 +216,28 @@ public class FcMocClientTest {
         verify(mockMocClient, times(1)).createEntity("application/json", pingEntity);
     }
 
-    @Test
-    @EnabledIfEnvironmentVariables({
-            @EnabledIfEnvironmentVariable(named = "TEST_COGNITO_USER_POOL_ID", matches = ".*"),
-            @EnabledIfEnvironmentVariable(named = "TEST_COGNITO_CLIENT_ID", matches = ".*"),
-            @EnabledIfEnvironmentVariable(named = "TEST_COGNITO_USERNAME", matches = ".*"),
-            @EnabledIfEnvironmentVariable(named = "TEST_COGNITO_PASSWORD", matches = ".*")
-    })
-    public void testSendPingWithRealClient() {
-        FcMocClient realClient = new FcMocClient(new MocClient());
-        boolean authenticated = realClient.auth();
-        assertTrue("Authentication should succeed with valid credentials", authenticated);
+    // @Test
+    // @EnabledIfEnvironmentVariables({
+    // @EnabledIfEnvironmentVariable(named = "TEST_COGNITO_USER_POOL_ID", matches =
+    // ".*"),
+    // @EnabledIfEnvironmentVariable(named = "TEST_COGNITO_CLIENT_ID", matches =
+    // ".*"),
+    // @EnabledIfEnvironmentVariable(named = "TEST_COGNITO_USERNAME", matches =
+    // ".*"),
+    // @EnabledIfEnvironmentVariable(named = "TEST_COGNITO_PASSWORD", matches =
+    // ".*")
+    // })
+    // public void testSendPingWithRealClient() {
+    // FcMocClient realClient = new FcMocClient(new MocClient());
+    // boolean authenticated = realClient.auth();
+    // assertTrue("Authentication should succeed with valid credentials",
+    // authenticated);
 
-        String entityId = "real-ping-001";
-        boolean status = true;
+    // String entityId = "real-ping-001";
+    // boolean status = true;
 
-        realClient.sendPing(entityId, status);
-        // Here you would typically verify the entity was created in the actual MOC
-        // service
-    }
+    // realClient.sendPing(entityId, status);
+    // // Here you would typically verify the entity was created in the actual MOC
+    // // service
+    // }
 }

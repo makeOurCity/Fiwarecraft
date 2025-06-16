@@ -4,6 +4,8 @@ import city.makeour.moc.MocClient;
 import city.makeour.fiwarecraft.model.Ping;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariables;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -11,6 +13,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -24,6 +30,7 @@ public class FcMocClientTest {
     @Before
     public void setUp() {
         fcMocClient = new FcMocClient(mockMocClient);
+        fcMocClient.auth();
     }
 
     @Test
@@ -90,7 +97,7 @@ public class FcMocClientTest {
     @Test
     public void testSendPingSetsDefaultTimestamp() throws Exception {
         LocalDateTime beforeCall = LocalDateTime.now();
-        
+
         Ping pingEntity = new Ping();
         pingEntity.setType("Ping");
         pingEntity.setId("test-ping-004");
@@ -110,7 +117,7 @@ public class FcMocClientTest {
     @Test
     public void testSendPingWithCustomService() throws Exception {
         fcMocClient.setFiwareService("custom-service");
-        
+
         Ping pingEntity = new Ping();
         pingEntity.setType("Ping");
         pingEntity.setId("test-ping-005");
@@ -143,7 +150,7 @@ public class FcMocClientTest {
     @Test
     public void testSendPingPreservesExistingValues() throws Exception {
         LocalDateTime existingTime = LocalDateTime.of(2023, 1, 1, 12, 0, 0);
-        
+
         Ping pingEntity = new Ping();
         pingEntity.setType("CustomPing");
         pingEntity.setId("test-ping-preserve");
@@ -162,27 +169,27 @@ public class FcMocClientTest {
     @Test
     public void testSendPingWithIdAndStatusCreatesCorrectEntity() throws Exception {
         LocalDateTime beforeCall = LocalDateTime.now();
-        
+
         fcMocClient.sendPing("simple-ping", false);
-        
+
         LocalDateTime afterCall = LocalDateTime.now();
 
         verify(mockMocClient, times(1)).setFiwareService("fiwarecraft");
         verify(mockMocClient, times(1)).createEntity(eq("application/json"), argThat(ping -> {
             Ping p = (Ping) ping;
             return "Ping".equals(p.getType()) &&
-                   "simple-ping".equals(p.getId()) &&
-                   !p.isStatus() &&
-                   p.getLastSucceededAt() != null &&
-                   p.getLastSucceededAt().isAfter(beforeCall.minusSeconds(1)) &&
-                   p.getLastSucceededAt().isBefore(afterCall.plusSeconds(1));
+                    "simple-ping".equals(p.getId()) &&
+                    !p.isStatus() &&
+                    p.getLastSucceededAt() != null &&
+                    p.getLastSucceededAt().isAfter(beforeCall.minusSeconds(1)) &&
+                    p.getLastSucceededAt().isBefore(afterCall.plusSeconds(1));
         }));
     }
 
     @Test
     public void testSendPingWithNullService() throws Exception {
         fcMocClient.setFiwareService(null);
-        
+
         Ping pingEntity = new Ping();
         pingEntity.setType("Ping");
         pingEntity.setId("test-ping-null-service");
@@ -197,7 +204,7 @@ public class FcMocClientTest {
     @Test
     public void testSendPingWithEmptyService() throws Exception {
         fcMocClient.setFiwareService("");
-        
+
         Ping pingEntity = new Ping();
         pingEntity.setType("Ping");
         pingEntity.setId("test-ping-empty-service");
@@ -207,5 +214,25 @@ public class FcMocClientTest {
 
         verify(mockMocClient, never()).setFiwareService(anyString());
         verify(mockMocClient, times(1)).createEntity("application/json", pingEntity);
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariables({
+            @EnabledIfEnvironmentVariable(named = "TEST_COGNITO_USER_POOL_ID", matches = ".*"),
+            @EnabledIfEnvironmentVariable(named = "TEST_COGNITO_CLIENT_ID", matches = ".*"),
+            @EnabledIfEnvironmentVariable(named = "TEST_COGNITO_USERNAME", matches = ".*"),
+            @EnabledIfEnvironmentVariable(named = "TEST_COGNITO_PASSWORD", matches = ".*")
+    })
+    public void testSendPingWithRealClient() {
+        FcMocClient realClient = new FcMocClient(new MocClient());
+        boolean authenticated = realClient.auth();
+        assertTrue("Authentication should succeed with valid credentials", authenticated);
+
+        String entityId = "real-ping-001";
+        boolean status = true;
+
+        realClient.sendPing(entityId, status);
+        // Here you would typically verify the entity was created in the actual MOC
+        // service
     }
 }

@@ -35,8 +35,14 @@ public class App extends JavaPlugin {
     getLogger().info("Fiwarecraft plugin has been enabled!");
 
     this.mocClient = new FcMocClient(new MocClient());
-    this.mocClient.auth();
+    boolean authenticated = this.mocClient.auth();
+    if (!authenticated) {
+      getLogger().severe("Authentication failed. Please check your environment variables for Cognito credentials.");
+      return;
+    }
+    this.mocClient.sendPing(" urn:ngsi-ld:ping:test-serer-001", true);
 
+    getLogger().info("Send ping");
   }
 
   @Override

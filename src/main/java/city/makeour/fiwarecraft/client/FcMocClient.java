@@ -22,19 +22,25 @@ public class FcMocClient {
         this.fiwareService = fiwareService;
     }
 
-    public void auth() {
+    public boolean auth() {
         String cognitoUserPoolId = System.getenv("TEST_COGNITO_USER_POOL_ID");
         String cognitoClientId = System.getenv("TEST_COGNITO_CLIENT_ID");
         String username = System.getenv("TEST_COGNITO_USERNAME");
         String password = System.getenv("TEST_COGNITO_PASSWORD");
 
+        if (cognitoUserPoolId == null || cognitoClientId == null || username == null || password == null) {
+            return false;
+        }
+
         this.mocClient.setMocAuthInfo(cognitoUserPoolId, cognitoClientId);
         try {
             this.mocClient.auth(username, password);
         } catch (InvalidKeyException | NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+            return false;
         }
+
+        return true;
     }
 
     public void sendPing(String entityId, boolean status) {

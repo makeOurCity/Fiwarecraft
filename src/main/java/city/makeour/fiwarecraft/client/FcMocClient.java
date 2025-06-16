@@ -7,6 +7,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 
+import org.springframework.web.client.RestClient.ResponseSpec;
+
 public class FcMocClient {
 
     protected MocClient mocClient;
@@ -70,7 +72,11 @@ public class FcMocClient {
             mocClient.setFiwareService(this.fiwareService);
         }
 
-        mocClient.createEntity("application/json", pingEntity);
+        var resp = mocClient.createEntity("application/json", pingEntity);
+        if (resp != null) {
+            System.out.println("Response: " + resp.toString());
+            System.out.println("Ping sent: " + resp.body(String.class));
+        }
     }
 
     public void setFiwareService(String fiwareService) {

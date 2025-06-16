@@ -2,6 +2,9 @@ package city.makeour.fiwarecraft.client;
 
 import city.makeour.moc.MocClient;
 import city.makeour.fiwarecraft.model.Ping;
+
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 
 public class FcMocClient {
@@ -17,6 +20,21 @@ public class FcMocClient {
     public FcMocClient(MocClient mocClient, String fiwareService) {
         this.mocClient = mocClient;
         this.fiwareService = fiwareService;
+    }
+
+    public void auth() {
+        String cognitoUserPoolId = System.getenv("TEST_COGNITO_USER_POOL_ID");
+        String cognitoClientId = System.getenv("TEST_COGNITO_CLIENT_ID");
+        String username = System.getenv("TEST_COGNITO_USERNAME");
+        String password = System.getenv("TEST_COGNITO_PASSWORD");
+
+        this.mocClient.setMocAuthInfo(cognitoUserPoolId, cognitoClientId);
+        try {
+            this.mocClient.auth(username, password);
+        } catch (InvalidKeyException | NoSuchAlgorithmException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public void sendPing(String entityId, boolean status) {

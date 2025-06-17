@@ -4,7 +4,7 @@
 
 <https://papermc.io/downloads/paper> よりダウンロード。
 
-`launch.sh` の作成
+以下を参考に `launch.sh` の作成
 
 ```sh
 #/bin/sh

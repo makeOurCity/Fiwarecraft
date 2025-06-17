@@ -1,4 +1,4 @@
-main: org.code4japan.fiwarecraft.App
+main: city.makeour.fiwarecraft.App
 name: Fiwarecraft
 version: '1.0-SNAPSHOT'
 api-version: '1.13'

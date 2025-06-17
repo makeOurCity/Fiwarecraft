@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "fuldiss.minecraft",
+    "GitHub.vscode-github-actions",
+    "streetsidesoftware.code-spell-checker",
+    "davidanson.vscode-markdownlint",
+    "vscjava.vscode-java-pack"
+  ]
+}

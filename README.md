@@ -6,5 +6,6 @@ minecraftのデータをデータ連携基盤に連携するプラグインで�
 
 ## ドキュメント
 
+- [Javaの準備(macOS)](./doc/java-macos.md)
 - [マインクラフトの準備](./docs/minecraft.md)
 - [プラグイン使用方法](./docs/plugin.md)

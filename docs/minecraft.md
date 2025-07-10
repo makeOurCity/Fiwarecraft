@@ -31,6 +31,7 @@ Java Editionの、起動構成のタブに移動する。
 ![boot](<img/minecraft-java.png>)
 
 新規作成をして、以下のような接続設定で起動する。
+`ゲームディレクトリ` に関しては各々自分のローカル環境にディレクトリを作成してそのパスを指定する。
 
 ![boot](<img/connection.png>)
 

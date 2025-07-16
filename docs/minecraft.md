@@ -2,9 +2,10 @@
 
 ## 1. paperサーバーのダウンロード・起動
 
-<https://papermc.io/downloads/paper> よりダウンロード。
+<https://papermc.io/downloads/all?project=paper> より `1.21.4` の最新ビルドをダウンロード。
 
-以下を参考に `launch.sh` の作成
+以下を参考に `launch.sh` の作成。jarファイル名はダウンロードしたものに合わせる。
+作者とバージョンを完全に一致させたい場合は `1.21.4 #231` を使用してください。
 
 ```sh
 #/bin/sh

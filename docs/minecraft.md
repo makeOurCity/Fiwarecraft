@@ -55,4 +55,4 @@ Java Editionの、起動構成のタブに移動する。
 
 ![servers](<img/servers.png>)
 
-![servers](<img/add_servers.png>)
+![add_server](<img/add_server.png>)

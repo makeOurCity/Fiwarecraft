@@ -5,7 +5,7 @@
 以下でビルドします。
 
 ```console
-mvn clean package
+mvn clean package -DskipTests=true
 ```
 
 ビルド成功したら `target/fiwarecraft-x.x-SNAPSHOT.jar` ファイルを、paper MCのディレクトリのpluginディレクトリ下に配置します。

@@ -61,7 +61,7 @@ public class FcMocClientTest {
         
         // 2. updateEntity が正しい引数 (ID, Type, Map) で呼ばれたか検証
         // 第3引数の Map には時刻とステータスが入っているため any(Map.class) で検証
-        verify(mockMocClient, times(1)).updateEntity(eq(entityId), eq("Ping"), any());
+        verify(mockMocClient, times(1)).updateEntity(eq(entityId), eq("Ping"), any(Object.class));
     }
 
     @Test
@@ -71,7 +71,7 @@ public class FcMocClientTest {
         fcMocClient.sendPing("test-id", true);
 
         verify(mockMocClient, times(1)).setFiwareService("custom-service");
-        verify(mockMocClient, times(1)).updateEntity(anyString(), eq("Ping"), any());
+        verify(mockMocClient, times(1)).updateEntity(anyString(), eq("Ping"), any(Object.class));
     }
 
     @Test
@@ -81,7 +81,7 @@ public class FcMocClientTest {
         fcMocClient.sendPing("test-id", true);
 
         verify(mockMocClient, never()).setFiwareService(anyString());
-        verify(mockMocClient, times(1)).updateEntity(anyString(), eq("Ping"), any());
+        verify(mockMocClient, times(1)).updateEntity(anyString(), eq("Ping"), any(Object.class));
     }
 
     @Test
@@ -91,6 +91,6 @@ public class FcMocClientTest {
         fcMocClient.sendPing("test-id", true);
 
         verify(mockMocClient, never()).setFiwareService(anyString());
-        verify(mockMocClient, times(1)).updateEntity(anyString(), eq("Ping"), any());
+        verify(mockMocClient, times(1)).updateEntity(anyString(), eq("Ping"), any(Object.class));
     }
 }

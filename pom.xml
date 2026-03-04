@@ -62,7 +62,7 @@
     <dependency>
       <groupId>com.github.makeOurCity</groupId>
       <artifactId>moc-java</artifactId>
-      <version>cef8f9749baaf2efcb33b7c945cf7ec6a453b2f8</version>
+      <version>6a1a81e15fb74def837b8c788a449d77cdbf0f88</version>
     </dependency>
   
     <dependency>

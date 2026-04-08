@@ -48,5 +48,10 @@ public class App extends JavaPlugin {
   @Override
   public void onDisable() {
     getLogger().info("Fiwarecraft plugin has been disabled!");
+    if (this.mocClient != null) {
+      // onEnableと同じ Entity ID を指定して、ステータスを false にして送信
+      this.mocClient.sendPing("urn:ngsi-ld:ping:test-serer-001", false);
+      getLogger().info("Send ping (offline)");
+    }
   }
 }

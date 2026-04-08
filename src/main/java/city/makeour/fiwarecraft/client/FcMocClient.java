@@ -6,6 +6,9 @@ import city.makeour.fiwarecraft.model.Ping;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.web.client.RestClient.ResponseSpec;
 
@@ -49,6 +52,7 @@ public class FcMocClient {
         return true;
     }
 
+    /*
     public void sendPing(String entityId, boolean status) {
         Ping pingEntity = new Ping();
         pingEntity.setType("Ping");
@@ -78,6 +82,30 @@ public class FcMocClient {
             System.out.println("Ping sent: " + resp.body(String.class));
         }
     }
+    */
+
+    public void sendPing(String entityId, boolean status) {
+        // 1. Pingオブジェクトの生成（Mapではなくこちらを使う）
+        Ping pingEntity = new Ping();
+        pingEntity.setId(entityId);
+        pingEntity.setType("Ping");
+        pingEntity.setLastSucceededAt(LocalDateTime.now());
+        pingEntity.setStatus(status);
+
+        // 2. Fiware-Service ヘッダーの設定
+        if (this.fiwareService != null && !this.fiwareService.isEmpty()) {
+            mocClient.setFiwareService(this.fiwareService);
+        }
+
+        // 3. MocClientのupdateEntityを呼び出し（作成 or 更新を自動判別）
+        var resp = mocClient.updateEntity(entityId, "Ping", pingEntity);
+
+        // 4. レスポンスの確認
+        if (resp != null) {
+            System.out.println("Ping Upserted for ID: " + entityId);
+        }
+    }
+
 
     public void setFiwareService(String fiwareService) {
         this.fiwareService = fiwareService;

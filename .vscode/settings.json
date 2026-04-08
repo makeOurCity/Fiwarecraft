@@ -18,4 +18,5 @@
     "spigotmc",
     "vmargs"
   ],
+  "java.configuration.updateBuildConfiguration": "interactive",
 }

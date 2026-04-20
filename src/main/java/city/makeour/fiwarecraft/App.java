@@ -3,6 +3,10 @@ package city.makeour.fiwarecraft;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import city.makeour.fiwarecraft.client.FcMocClient;
@@ -11,9 +15,10 @@ import city.makeour.moc.MocClient;
 /**
  * Fiwarecraft plugin main class
  */
-public class App extends JavaPlugin {
+public class App extends JavaPlugin implements Listener {
 
   protected FcMocClient mocClient;
+  private static final String PLAYER_COUNT_ENTITY_ID = "urn:ngsi-ld:PlayerCount:server-001";
 
   /**
    * デフォルトのコンストラクタ
@@ -41,8 +46,24 @@ public class App extends JavaPlugin {
       return;
     }
     this.mocClient.sendPing("urn:ngsi-ld:ping:test-serer-001", true);
+    getServer().getPluginManager().registerEvents(this, this);
 
     getLogger().info("Send ping");
+  }
+
+  @EventHandler
+  public void onPlayerJoin(PlayerJoinEvent event) {
+    int count = getServer().getOnlinePlayers().size();
+    getLogger().info("Player joined: " + event.getPlayer().getName() + " (online: " + count + ")");
+    this.mocClient.sendPlayerCount(PLAYER_COUNT_ENTITY_ID, count);
+  }
+
+  @EventHandler
+  public void onPlayerQuit(PlayerQuitEvent event) {
+    // Quit時点ではまだプレイヤーが含まれているので -1
+    int count = getServer().getOnlinePlayers().size() - 1;
+    getLogger().info("Player quit: " + event.getPlayer().getName() + " (online: " + count + ")");
+    this.mocClient.sendPlayerCount(PLAYER_COUNT_ENTITY_ID, count);
   }
 
   @Override

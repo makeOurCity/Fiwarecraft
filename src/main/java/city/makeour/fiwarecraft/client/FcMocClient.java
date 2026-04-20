@@ -2,6 +2,7 @@ package city.makeour.fiwarecraft.client;
 
 import city.makeour.moc.MocClient;
 import city.makeour.fiwarecraft.model.Ping;
+import city.makeour.fiwarecraft.model.PlayerCount;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -106,6 +107,23 @@ public class FcMocClient {
         }
     }
 
+
+    public void sendPlayerCount(String entityId, int count) {
+        PlayerCount entity = new PlayerCount();
+        entity.setId(entityId);
+        entity.setType("PlayerCount");
+        entity.setCount(count);
+        entity.setUpdatedAt(LocalDateTime.now());
+
+        if (this.fiwareService != null && !this.fiwareService.isEmpty()) {
+            mocClient.setFiwareService(this.fiwareService);
+        }
+
+        var resp = mocClient.updateEntity(entityId, "PlayerCount", entity);
+        if (resp != null) {
+            System.out.println("PlayerCount Upserted: " + count);
+        }
+    }
 
     public void setFiwareService(String fiwareService) {
         this.fiwareService = fiwareService;

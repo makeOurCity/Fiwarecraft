@@ -2,7 +2,10 @@ package city.makeour.fiwarecraft;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -18,7 +21,8 @@ import city.makeour.moc.MocClient;
 public class App extends JavaPlugin implements Listener {
 
   protected FcMocClient mocClient;
-  private static final String PLAYER_COUNT_ENTITY_ID = "urn:ngsi-ld:PlayerCount:server-001";
+  private static final String BASE_ENTITY_ID = "test-server-001";
+  private static final int GRID_SIZE = 64; // グリッドサイズ（ブロック単位）
 
   /**
    * デフォルトのコンストラクタ
@@ -45,8 +49,12 @@ public class App extends JavaPlugin implements Listener {
       getLogger().severe("Authentication failed. Please check your environment variables for Cognito credentials.");
       return;
     }
-    this.mocClient.sendPing("urn:ngsi-ld:ping:test-serer-001", true);
+    this.mocClient.sendPing(BASE_ENTITY_ID, true);
     getServer().getPluginManager().registerEvents(this, this);
+
+    // ヒートマップ更新を5秒ごとに実行
+    getServer().getScheduler().scheduleSyncRepeatingTask(this,
+      () -> updatePlayerHeatmap(), 0L, 100L);
 
     getLogger().info("Send ping");
   }
@@ -55,7 +63,7 @@ public class App extends JavaPlugin implements Listener {
   public void onPlayerJoin(PlayerJoinEvent event) {
     int count = getServer().getOnlinePlayers().size();
     getLogger().info("Player joined: " + event.getPlayer().getName() + " (online: " + count + ")");
-    this.mocClient.sendPlayerCount(PLAYER_COUNT_ENTITY_ID, count);
+    this.mocClient.sendPlayerCount(BASE_ENTITY_ID, count);
   }
 
   @EventHandler
@@ -63,15 +71,32 @@ public class App extends JavaPlugin implements Listener {
     // Quit時点ではまだプレイヤーが含まれているので -1
     int count = getServer().getOnlinePlayers().size() - 1;
     getLogger().info("Player quit: " + event.getPlayer().getName() + " (online: " + count + ")");
-    this.mocClient.sendPlayerCount(PLAYER_COUNT_ENTITY_ID, count);
+    this.mocClient.sendPlayerCount(BASE_ENTITY_ID, count);
+  }
+
+  private void updatePlayerHeatmap() {
+    Map<String, Integer> gridCounts = new HashMap<>();
+
+    for (Player player : getServer().getOnlinePlayers()) {
+      String gridId = getGridId(player);
+      gridCounts.put(gridId, gridCounts.getOrDefault(gridId, 0) + 1);
+    }
+
+    this.mocClient.sendServerData(BASE_ENTITY_ID, gridCounts);
+  }
+
+  private String getGridId(Player player) {
+    int gridX = (int) player.getLocation().getX() / GRID_SIZE;
+    int gridZ = (int) player.getLocation().getZ() / GRID_SIZE;
+    int gridY = (int) player.getLocation().getY() / GRID_SIZE;
+    return String.format("urn:ngsi-ld:Heatmap:grid-%d-%d-%d", gridX, gridY, gridZ);
   }
 
   @Override
   public void onDisable() {
     getLogger().info("Fiwarecraft plugin has been disabled!");
     if (this.mocClient != null) {
-      // onEnableと同じ Entity ID を指定して、ステータスを false にして送信
-      this.mocClient.sendPing("urn:ngsi-ld:ping:test-serer-001", false);
+      this.mocClient.sendPing(BASE_ENTITY_ID, false);
       getLogger().info("Send ping (offline)");
     }
   }

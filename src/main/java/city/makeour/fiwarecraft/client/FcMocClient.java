@@ -125,6 +125,31 @@ public class FcMocClient {
         }
     }
 
+    public void sendServerData(String entityId, Map<String, Integer> gridCounts) {
+        Map<String, Object> heatmapGrids = new HashMap<>();
+        for (String gridId : gridCounts.keySet()) {
+            Map<String, Object> gridData = new HashMap<>();
+            gridData.put("gridId", gridId);
+            gridData.put("count", gridCounts.get(gridId));
+            heatmapGrids.put(gridId, gridData);
+        }
+
+        Map<String, Object> serverData = new HashMap<>();
+        serverData.put("id", entityId);
+        serverData.put("type", "Server");
+        serverData.put("heatmapGrids", heatmapGrids);
+        serverData.put("recordedAt", LocalDateTime.now());
+
+        if (this.fiwareService != null && !this.fiwareService.isEmpty()) {
+            mocClient.setFiwareService(this.fiwareService);
+        }
+
+        var resp = mocClient.updateEntity(entityId, "Server", serverData);
+        if (resp != null) {
+            System.out.println("Server Data Sent: " + gridCounts.size() + " grids updated");
+        }
+    }
+
     public void setFiwareService(String fiwareService) {
         this.fiwareService = fiwareService;
     }

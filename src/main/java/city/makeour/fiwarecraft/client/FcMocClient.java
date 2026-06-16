@@ -3,6 +3,7 @@ package city.makeour.fiwarecraft.client;
 import city.makeour.moc.MocClient;
 import city.makeour.fiwarecraft.model.Ping;
 import city.makeour.fiwarecraft.model.PlayerCount;
+import city.makeour.fiwarecraft.model.Server;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -122,6 +123,30 @@ public class FcMocClient {
         var resp = mocClient.updateEntity(entityId, "PlayerCount", entity);
         if (resp != null) {
             System.out.println("PlayerCount Upserted: " + count);
+        }
+    }
+
+    public void sendServer(String entityId, Server server) {
+        if (server.getType() == null) {
+            server.setType("Server");
+        }
+
+        if (server.getId() == null) {
+            server.setId(entityId);
+        }
+
+        if (server.getUpdatedAt() == null) {
+            server.setUpdatedAt(LocalDateTime.now());
+        }
+
+        if (this.fiwareService != null && !this.fiwareService.isEmpty()) {
+            mocClient.setFiwareService(this.fiwareService);
+        }
+
+        var resp = mocClient.updateEntity(entityId, "Server", server);
+        if (resp != null) {
+            System.out.println("Server Upserted: " + server.getPlayerCount() + " players, " +
+                server.getHeatmap().size() + " grids, status=" + server.getStatus());
         }
     }
 

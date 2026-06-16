@@ -1,5 +1,6 @@
 package city.makeour.fiwarecraft;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -9,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import city.makeour.fiwarecraft.client.FcMocClient;
+import city.makeour.fiwarecraft.model.Server;
 import city.makeour.moc.MocClient;
 
 /**
@@ -68,10 +70,15 @@ public class App extends JavaPlugin implements Listener {
     }
 
     if (!Objects.equals(lastGridCounts, gridCounts)) {
-      this.mocClient.sendServerData(BASE_ENTITY_ID, gridCounts);
-      this.mocClient.sendPlayerCount(BASE_ENTITY_ID, totalPlayers);
+      Server server = new Server()
+        .playerCount(totalPlayers)
+        .heatmap(gridCounts)
+        .status("ONLINE")
+        .updatedAt(LocalDateTime.now());
+
+      this.mocClient.sendServer(BASE_ENTITY_ID, server);
       lastGridCounts = new HashMap<>(gridCounts);
-      getLogger().info("Updated heatmap and player count: " + totalPlayers + " players");
+      getLogger().info("Updated server: " + totalPlayers + " players, " + gridCounts.size() + " grids");
     }
   }
 
@@ -87,7 +94,13 @@ public class App extends JavaPlugin implements Listener {
     getLogger().info("Fiwarecraft plugin has been disabled!");
     if (this.mocClient != null) {
       this.mocClient.sendPing(BASE_ENTITY_ID, false);
-      getLogger().info("Send ping (offline)");
+      Server server = new Server()
+        .playerCount(0)
+        .heatmap(new HashMap<>())
+        .status("OFFLINE")
+        .updatedAt(LocalDateTime.now());
+      this.mocClient.sendServer(BASE_ENTITY_ID, server);
+      getLogger().info("Send ping and server status (offline)");
     }
   }
 }

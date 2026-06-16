@@ -1,15 +1,11 @@
 package city.makeour.fiwarecraft;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import city.makeour.fiwarecraft.client.FcMocClient;
@@ -23,6 +19,7 @@ public class App extends JavaPlugin implements Listener {
   protected FcMocClient mocClient;
   private static final String BASE_ENTITY_ID = "test-server-001";
   private static final int GRID_SIZE = 64; // グリッドサイズ（ブロック単位）
+  private Map<String, Integer> lastGridCounts = new HashMap<>();
 
   /**
    * デフォルトのコンストラクタ
@@ -52,37 +49,30 @@ public class App extends JavaPlugin implements Listener {
     this.mocClient.sendPing(BASE_ENTITY_ID, true);
     getServer().getPluginManager().registerEvents(this, this);
 
-    // ヒートマップ更新を5秒ごとに実行
+    // ヒートマップ更新を60秒ごとに実行（CPU削減）
     getServer().getScheduler().scheduleSyncRepeatingTask(this,
-      () -> updatePlayerHeatmap(), 0L, 100L);
+      () -> updatePlayerHeatmap(), 0L, 1200L);
 
     getLogger().info("Send ping");
   }
 
-  @EventHandler
-  public void onPlayerJoin(PlayerJoinEvent event) {
-    int count = getServer().getOnlinePlayers().size();
-    getLogger().info("Player joined: " + event.getPlayer().getName() + " (online: " + count + ")");
-    this.mocClient.sendPlayerCount(BASE_ENTITY_ID, count);
-  }
-
-  @EventHandler
-  public void onPlayerQuit(PlayerQuitEvent event) {
-    // Quit時点ではまだプレイヤーが含まれているので -1
-    int count = getServer().getOnlinePlayers().size() - 1;
-    getLogger().info("Player quit: " + event.getPlayer().getName() + " (online: " + count + ")");
-    this.mocClient.sendPlayerCount(BASE_ENTITY_ID, count);
-  }
 
   private void updatePlayerHeatmap() {
     Map<String, Integer> gridCounts = new HashMap<>();
+    int totalPlayers = 0;
 
     for (Player player : getServer().getOnlinePlayers()) {
+      totalPlayers++;
       String gridId = getGridId(player);
       gridCounts.put(gridId, gridCounts.getOrDefault(gridId, 0) + 1);
     }
 
-    this.mocClient.sendServerData(BASE_ENTITY_ID, gridCounts);
+    if (!Objects.equals(lastGridCounts, gridCounts)) {
+      this.mocClient.sendServerData(BASE_ENTITY_ID, gridCounts);
+      this.mocClient.sendPlayerCount(BASE_ENTITY_ID, totalPlayers);
+      lastGridCounts = new HashMap<>(gridCounts);
+      getLogger().info("Updated heatmap and player count: " + totalPlayers + " players");
+    }
   }
 
   private String getGridId(Player player) {

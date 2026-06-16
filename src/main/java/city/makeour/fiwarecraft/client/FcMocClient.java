@@ -2,6 +2,8 @@ package city.makeour.fiwarecraft.client;
 
 import city.makeour.moc.MocClient;
 import city.makeour.fiwarecraft.model.Ping;
+import city.makeour.fiwarecraft.model.PlayerCount;
+import city.makeour.fiwarecraft.model.Server;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -106,6 +108,72 @@ public class FcMocClient {
         }
     }
 
+
+    public void sendPlayerCount(String entityId, int count) {
+        PlayerCount entity = new PlayerCount();
+        entity.setId(entityId);
+        entity.setType("PlayerCount");
+        entity.setCount(count);
+        entity.setUpdatedAt(LocalDateTime.now());
+
+        if (this.fiwareService != null && !this.fiwareService.isEmpty()) {
+            mocClient.setFiwareService(this.fiwareService);
+        }
+
+        var resp = mocClient.updateEntity(entityId, "PlayerCount", entity);
+        if (resp != null) {
+            System.out.println("PlayerCount Upserted: " + count);
+        }
+    }
+
+    public void sendServer(String entityId, Server server) {
+        if (server.getType() == null) {
+            server.setType("Server");
+        }
+
+        if (server.getId() == null) {
+            server.setId(entityId);
+        }
+
+        if (server.getUpdatedAt() == null) {
+            server.setUpdatedAt(LocalDateTime.now());
+        }
+
+        if (this.fiwareService != null && !this.fiwareService.isEmpty()) {
+            mocClient.setFiwareService(this.fiwareService);
+        }
+
+        var resp = mocClient.updateEntity(entityId, "Server", server);
+        if (resp != null) {
+            System.out.println("Server Upserted: " + server.getPlayerCount() + " players, " +
+                server.getHeatmap().size() + " grids, status=" + server.getStatus());
+        }
+    }
+
+    public void sendServerData(String entityId, Map<String, Integer> gridCounts) {
+        Map<String, Object> heatmapGrids = new HashMap<>();
+        for (String gridId : gridCounts.keySet()) {
+            Map<String, Object> gridData = new HashMap<>();
+            gridData.put("gridId", gridId);
+            gridData.put("count", gridCounts.get(gridId));
+            heatmapGrids.put(gridId, gridData);
+        }
+
+        Map<String, Object> serverData = new HashMap<>();
+        serverData.put("id", entityId);
+        serverData.put("type", "Server");
+        serverData.put("heatmapGrids", heatmapGrids);
+        serverData.put("recordedAt", LocalDateTime.now());
+
+        if (this.fiwareService != null && !this.fiwareService.isEmpty()) {
+            mocClient.setFiwareService(this.fiwareService);
+        }
+
+        var resp = mocClient.updateEntity(entityId, "Server", serverData);
+        if (resp != null) {
+            System.out.println("Server Data Sent: " + gridCounts.size() + " grids updated");
+        }
+    }
 
     public void setFiwareService(String fiwareService) {
         this.fiwareService = fiwareService;
